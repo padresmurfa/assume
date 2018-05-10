@@ -1,7 +1,7 @@
-import Assume from './assume/assume';
-import AssumptionFailed from './assume/assumptionFailed';
-import normalizeClassNames from './assume/normalizeClassNames';
-import singleton from './assume/singleton';
+import Assume from 'src/assume';
+import AssumptionFailed from 'src/assumptionFailed';
+import normalizeClassNames from 'src/normalizeClassNames';
+import singleton from 'src/singleton';
 
 export default singleton;
 

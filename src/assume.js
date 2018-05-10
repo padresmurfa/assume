@@ -4,6 +4,15 @@ import _ from 'lodash';
 import normalizeClassNames from './normalizeClassNames';
 import AssumptionFailed from './assumptionFailed';
 
+const tString = typeof "";
+const tUndefined = typeof undefined;
+
+function isUndefinedOrString(value)
+{
+    const type = typeof value;
+    return (type === tUndefined) || (type === tString);    
+}
+
 function clarify(value)
 {
     if (value === null)
@@ -60,6 +69,28 @@ export default class Assume
 
             this.fail(message || `Expected values to be equal (${expected},${actual})`);
         }
+    }
+
+    isError(value, message)
+    {
+        if (value instanceof Error)
+        {
+            return;
+        }
+    
+        // we're also fine with duck-typing:
+        const isMessageLegit = isUndefinedOrString(value.message);
+        const isStackLegit = isUndefinedOrString(value.stack);
+    
+        const isErrorLegit = isMessageLegit && isStackLegit;
+        if (isErrorLegit)
+        {
+            return;
+        }
+
+        const actual = clarify(value);
+
+        this.fail(message || `Expected values to be an Error (${actual})`);
     }
 
     isInstanceOf(value, classNames, message)
