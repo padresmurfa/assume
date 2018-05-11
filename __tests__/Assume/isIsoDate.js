@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import assume, { AssumptionFailed } from 'src/index';
+import assume, { AssumptionFailed } from 'index';
 
 describe('assume', ()=>{
 

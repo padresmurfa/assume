@@ -1,4 +1,4 @@
-import assume, { normalizeClassNames } from 'src/index';
+import assume, { normalizeClassNames } from 'index';
 
 describe('normalizeClassNames', ()=>{
 

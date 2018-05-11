@@ -1,8 +1,8 @@
 import moment from 'moment';
 import _ from 'lodash';
 
-import normalizeClassNames from './normalizeClassNames';
-import AssumptionFailed from './assumptionFailed';
+import normalizeClassNames from 'normalizeClassNames';
+import AssumptionFailed from 'assumptionFailed';
 
 const tString = typeof "";
 const tUndefined = typeof undefined;
