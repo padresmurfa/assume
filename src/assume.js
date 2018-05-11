@@ -71,6 +71,26 @@ export default class Assume
         }
     }
 
+    isTrue(actual, message)
+    {
+        if (true !== actual)
+        {
+            actual = clarify(actual);
+
+            this.fail(message || `Expected value (${actual}) to be true`);
+        }
+    }
+
+    isFalse(actual, message)
+    {
+        if (false !== actual)
+        {
+            actual = clarify(actual);
+
+            this.fail(message || `Expected value (${actual}) to be false`);
+        }
+    }
+    
     isError(value, message)
     {
         if (value instanceof Error)
