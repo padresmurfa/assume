@@ -81,6 +81,24 @@ var Assume = function () {
             }
         }
     }, {
+        key: 'isTrue',
+        value: function isTrue(actual, message) {
+            if (true !== actual) {
+                actual = clarify(actual);
+
+                this.fail(message || 'Expected value (' + actual + ') to be true');
+            }
+        }
+    }, {
+        key: 'isFalse',
+        value: function isFalse(actual, message) {
+            if (false !== actual) {
+                actual = clarify(actual);
+
+                this.fail(message || 'Expected value (' + actual + ') to be false');
+            }
+        }
+    }, {
         key: 'isError',
         value: function isError(value, message) {
             if (value instanceof Error) {
