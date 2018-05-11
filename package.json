@@ -7,7 +7,7 @@
     "test": "node_modules/.bin/jest",
     "clean": "rm -rf dist && mkdir dist && mkdir dist/babel",
     "babel": "npx babel src --out-dir dist/babel",
-    "minify": "cat dist/babel/* | npx minify --js > dist/assume.min.js",
+    "minify": "npx @coderaiser/minify dist/babel/* > dist/assume.min.js",
     "build": "npm run-script babel && npm run-script minify",
     "rebuild": "npm run-script clean && npm run-script build"
   },
