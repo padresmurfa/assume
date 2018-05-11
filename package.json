@@ -2,7 +2,7 @@
   "name": "@padresmurfa/assume",
   "version": "0.1.2",
   "description": "Make your assumptions explicit in code, so they don't end up being the Mother of All F*ck-ups",
-  "main": "assume.js",
+  "main": "dist/assume.min.js",
   "scripts": {
     "test": "node_modules/.bin/jest",
     "clean": "rm -rf dist && mkdir dist && mkdir dist/babel",
