@@ -1,4 +1,4 @@
-import assume, { AssumptionFailed } from 'assume';
+import assume, { AssumptionFailed } from 'src/index';
 
 describe('assume', ()=>{
 

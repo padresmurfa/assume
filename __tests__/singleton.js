@@ -1,4 +1,4 @@
-import assume, { Assume } from 'assume';
+import assume, { Assume } from 'src/index';
 
 describe('singleton', ()=>{
 

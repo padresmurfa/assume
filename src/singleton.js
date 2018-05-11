@@ -1,4 +1,4 @@
-import Assume from 'src/assume';
+import Assume from './assume';
 
 let singleton = new Assume();
 
