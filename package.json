@@ -1,6 +1,6 @@
 {
   "name": "@padresmurfa/assume",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Make your assumptions explicit in code, so they don't end up being the Mother of All F*ck-ups",
   "main": "dist/index.js",
   "scripts": {
