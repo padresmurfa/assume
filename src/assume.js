@@ -1,8 +1,10 @@
-import moment from 'moment';
-import _ from 'lodash';
-
-import normalizeClassNames from 'normalizeClassNames';
 import AssumptionFailed from 'assumptionFailed';
+import _ from 'lodash';
+import moment from 'moment';
+
+/* eslint-disable sort-imports */
+import normalizeClassNames, {isSingular} from 'normalizeClassNames';
+/* eslint-enable sort-imports */
 
 const tString = typeof "";
 const tUndefined = typeof undefined;
@@ -10,6 +12,7 @@ const tUndefined = typeof undefined;
 function isUndefinedOrString(value)
 {
     const type = typeof value;
+
     return (type === tUndefined) || (type === tString);    
 }
 
@@ -17,28 +20,29 @@ function clarify(value)
 {
     if (value === null)
     {
-        value = "<null>";
+        return "<null>";
     }
     else if (value === undefined)
     {
-        value = "<undefined>";
+        return "<undefined>";
     }
     else if (_.isArray(value))
     {
-        value = "<array>";
+        return "<array>";
     }
     else if (_.isDate(value))
     {
-        value = "<date>";
+        return "<date>";
     }
     else if (_.isObject(value))
     {
-        value = "<object>";
+        return "<object>";
     }
     else if (_.isString(value))
     {
-        value = `"${value}"`;
+        return `"${value}"`;
     }
+
     return value;
 }
 
@@ -48,11 +52,14 @@ export default class Assume
     {
         if (factory === undefined)
         {
-            factory = (msg)=> {
+            this.factory = (msg)=> {
                 return new AssumptionFailed(msg);
             };
         }
-        this.factory = factory;
+        else
+        {
+            this.factory = factory;
+        }
     }
 
     fail(message)
@@ -64,30 +71,30 @@ export default class Assume
     {
         if (!_.isEqual(expected, actual))
         {
-            expected = clarify(expected);
-            actual = clarify(actual);
+            const ce = clarify(expected);
+            const ca = clarify(actual);
 
-            this.fail(message || `Expected values to be equal (${expected},${actual})`);
+            this.fail(message || `Expected values to be equal (${ce},${ca})`);
         }
     }
 
     isTrue(actual, message)
     {
-        if (true !== actual)
+        if (actual !== true)
         {
-            actual = clarify(actual);
+            const ca = clarify(actual);
 
-            this.fail(message || `Expected value (${actual}) to be true`);
+            this.fail(message || `Expected value (${ca}) to be true`);
         }
     }
 
     isFalse(actual, message)
     {
-        if (false !== actual)
+        if (actual !== false)
         {
-            actual = clarify(actual);
+            const ca = clarify(actual);
 
-            this.fail(message || `Expected value (${actual}) to be false`);
+            this.fail(message || `Expected value (${ca}) to be false`);
         }
     }
     
@@ -101,50 +108,50 @@ export default class Assume
         // we're also fine with duck-typing:
         const isMessageLegit = isUndefinedOrString(value.message);
         const isStackLegit = isUndefinedOrString(value.stack);
-    
         const isErrorLegit = isMessageLegit && isStackLegit;
+
         if (isErrorLegit)
         {
             return;
         }
 
-        const actual = clarify(value);
+        const ca = clarify(value);
 
-        this.fail(message || `Expected values to be an Error (${actual})`);
+        this.fail(message || `Expected values to be an Error (${ca})`);
     }
 
     isInstanceOf(value, classNames, message)
     {
-        classNames = normalizeClassNames(classNames);
+        const normalized = normalizeClassNames(classNames);
 
-        if (!_.some(classNames,(className)=>{
+        if (!_.some(normalized,(className)=>{
             return className === value.constructor.name;
         }))
         {
-            if (classNames.length === 1)
+            if (isSingular(normalized))
             {
-                this.fail(message || `Expected value to be an instance of ${classNames[0]}`);
+                this.fail(message || `Expected value to be an instance of ${_.first(normalized)}`);
             }
             else
             {
-                this.fail(message || `Expected value to be an instance of one of the following: ${classNames}`);
+                this.fail(message || `Expected value to be an instance of one of the following: ${normalized}`);
             }
         }
     }
     
     isNull(value, message)
     {
-        if (null !== value)
+        if (value !== null)
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be null`);
+            this.fail(message || `Expected value (${cv}) to be null`);
         }
     }
 
     isNotNull(value, message)
     {
-        if (null === value)
+        if (value === null)
         {
             this.fail(message || 'Expected value to not be null');
         }
@@ -162,9 +169,9 @@ export default class Assume
     {
         if (!_.isUndefined(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be undefined`);
+            this.fail(message || `Expected value (${cv}) to be undefined`);
         }
     }
 
@@ -172,9 +179,9 @@ export default class Assume
     {
         if (!_.isEmpty(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be empty`);
+            this.fail(message || `Expected value (${cv}) to be empty`);
         }
     }
 
@@ -182,9 +189,9 @@ export default class Assume
     {
         if (_.isEmpty(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to not be empty`);
+            this.fail(message || `Expected value (${cv}) to not be empty`);
         }
     }
 
@@ -192,9 +199,9 @@ export default class Assume
     {
         if (!_.isString(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be a string`);
+            this.fail(message || `Expected value (${cv}) to be a string`);
         }
     }
 
@@ -205,28 +212,28 @@ export default class Assume
             return;
         }
 
-        value = clarify(value);
+        const cv = clarify(value);
 
-        this.fail(message || `Expected value (${value}) to be immutable`);
+        this.fail(message || `Expected value (${cv}) to be immutable`);
     }
 
     isInteger(value, message)
     {
         if (!_.isInteger(value))
         {
+            let cv = clarify(value);
+
             if (_.isString(value))
             {
-                const p = parseInt(value);
+                const p = parseInt(value, 10);
+                
                 if ((p !== undefined) && (p.toString() === value))
                 {
-                    value = `"${value}"`;
+                    cv = `"${value}"`;
                 }
             }
-            else
-            {
-                value = clarify(value);
-            }
-            this.fail(message || `Expected value (${value}) to be an integer`);
+
+            this.fail(message || `Expected value (${cv}) to be an integer`);
         }
     }
 
@@ -234,15 +241,14 @@ export default class Assume
     {
         if (!_.isBoolean(value))
         {
+            let cv = clarify(value);
+
             if (_.isString(value) && ((value === "true") || (value === "false")))
             {
-                value = `"${value}"`;
+                cv = `"${value}"`;
             }
-            else
-            {
-                value = clarify(value);
-            }
-            this.fail(message || `Expected value (${value}) to be a boolean`);
+
+            this.fail(message || `Expected value (${cv}) to be a boolean`);
         }
     }
 
@@ -250,15 +256,14 @@ export default class Assume
     {
         if (!_.isArray(value))
         {
+            let cv = clarify(value);
+
             if (_.isString(value) && value.startsWith("[") && value.endsWith("]"))
             {
-                value = `"${value}"`;
+                cv = `"${value}"`;
             }
-            else
-            {
-                value = clarify(value);
-            }
-            this.fail(message || `Expected value (${value}) to be an array`);
+
+            this.fail(message || `Expected value (${cv}) to be an array`);
         }
     }
 
@@ -266,15 +271,14 @@ export default class Assume
     {
         if (!_.isObject(value))
         {
+            let cv = clarify(value);
+
             if (_.isString(value) && value.startsWith("{") && value.endsWith("}"))
             {
-                value = `"${value}"`;
+                cv = `"${value}"`;
             }
-            else
-            {
-                value = clarify(value);
-            }
-            this.fail(message || `Expected value (${value}) to be an object`);
+
+            this.fail(message || `Expected value (${cv}) to be an object`);
         }
     }
 
@@ -282,9 +286,9 @@ export default class Assume
     {
         if (!_.isDate(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be a date`);
+            this.fail(message || `Expected value (${cv}) to be a date`);
         }
     }
 
@@ -292,9 +296,9 @@ export default class Assume
     {
         if (!_.isString(value))
         {
-            value = clarify(value);
+            const cv = clarify(value);
 
-            this.fail(message || `Expected value (${value}) to be a string containing an ISO-8601 date`);
+            this.fail(message || `Expected value (${cv}) to be a string containing an ISO-8601 date`);
         }
         if (!moment(value, moment.ISO_8601).isValid())
         {

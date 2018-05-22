@@ -6,7 +6,7 @@ export default class AssumptionFailed
         {
             throw new Error(message);
         }
-        catch(e)
+        catch (e)
         {
             this.message = message;
             this.stack = e.stack;

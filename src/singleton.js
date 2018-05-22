@@ -1,5 +1,5 @@
 import Assume from 'assume';
 
-let singleton = new Assume();
+const singleton = new Assume();
 
 export default singleton;

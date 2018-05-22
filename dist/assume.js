@@ -8,48 +8,55 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _moment = require('moment');
+/* eslint-disable sort-imports */
 
-var _moment2 = _interopRequireDefault(_moment);
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _normalizeClassNames = require('./normalizeClassNames');
-
-var _normalizeClassNames2 = _interopRequireDefault(_normalizeClassNames);
 
 var _assumptionFailed = require('./assumptionFailed');
 
 var _assumptionFailed2 = _interopRequireDefault(_assumptionFailed);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _normalizeClassNames = require('./normalizeClassNames');
+
+var _normalizeClassNames2 = _interopRequireDefault(_normalizeClassNames);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* eslint-enable sort-imports */
 
 var tString = _typeof("");
 var tUndefined = typeof undefined === 'undefined' ? 'undefined' : _typeof(undefined);
 
 function isUndefinedOrString(value) {
     var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
+
     return type === tUndefined || type === tString;
 }
 
 function clarify(value) {
     if (value === null) {
-        value = "<null>";
+        return "<null>";
     } else if (value === undefined) {
-        value = "<undefined>";
+        return "<undefined>";
     } else if (_lodash2.default.isArray(value)) {
-        value = "<array>";
+        return "<array>";
     } else if (_lodash2.default.isDate(value)) {
-        value = "<date>";
+        return "<date>";
     } else if (_lodash2.default.isObject(value)) {
-        value = "<object>";
+        return "<object>";
     } else if (_lodash2.default.isString(value)) {
-        value = '"' + value + '"';
+        return '"' + value + '"';
     }
+
     return value;
 }
 
@@ -58,11 +65,12 @@ var Assume = function () {
         _classCallCheck(this, Assume);
 
         if (factory === undefined) {
-            factory = function factory(msg) {
+            this.factory = function (msg) {
                 return new _assumptionFailed2.default(msg);
             };
+        } else {
+            this.factory = factory;
         }
-        this.factory = factory;
     }
 
     _createClass(Assume, [{
@@ -74,28 +82,28 @@ var Assume = function () {
         key: 'areEqual',
         value: function areEqual(expected, actual, message) {
             if (!_lodash2.default.isEqual(expected, actual)) {
-                expected = clarify(expected);
-                actual = clarify(actual);
+                var ce = clarify(expected);
+                var ca = clarify(actual);
 
-                this.fail(message || 'Expected values to be equal (' + expected + ',' + actual + ')');
+                this.fail(message || 'Expected values to be equal (' + ce + ',' + ca + ')');
             }
         }
     }, {
         key: 'isTrue',
         value: function isTrue(actual, message) {
-            if (true !== actual) {
-                actual = clarify(actual);
+            if (actual !== true) {
+                var ca = clarify(actual);
 
-                this.fail(message || 'Expected value (' + actual + ') to be true');
+                this.fail(message || 'Expected value (' + ca + ') to be true');
             }
         }
     }, {
         key: 'isFalse',
         value: function isFalse(actual, message) {
-            if (false !== actual) {
-                actual = clarify(actual);
+            if (actual !== false) {
+                var ca = clarify(actual);
 
-                this.fail(message || 'Expected value (' + actual + ') to be false');
+                this.fail(message || 'Expected value (' + ca + ') to be false');
             }
         }
     }, {
@@ -108,44 +116,44 @@ var Assume = function () {
             // we're also fine with duck-typing:
             var isMessageLegit = isUndefinedOrString(value.message);
             var isStackLegit = isUndefinedOrString(value.stack);
-
             var isErrorLegit = isMessageLegit && isStackLegit;
+
             if (isErrorLegit) {
                 return;
             }
 
-            var actual = clarify(value);
+            var ca = clarify(value);
 
-            this.fail(message || 'Expected values to be an Error (' + actual + ')');
+            this.fail(message || 'Expected values to be an Error (' + ca + ')');
         }
     }, {
         key: 'isInstanceOf',
         value: function isInstanceOf(value, classNames, message) {
-            classNames = (0, _normalizeClassNames2.default)(classNames);
+            var normalized = (0, _normalizeClassNames2.default)(classNames);
 
-            if (!_lodash2.default.some(classNames, function (className) {
+            if (!_lodash2.default.some(normalized, function (className) {
                 return className === value.constructor.name;
             })) {
-                if (classNames.length === 1) {
-                    this.fail(message || 'Expected value to be an instance of ' + classNames[0]);
+                if ((0, _normalizeClassNames.isSingular)(normalized)) {
+                    this.fail(message || 'Expected value to be an instance of ' + _lodash2.default.first(normalized));
                 } else {
-                    this.fail(message || 'Expected value to be an instance of one of the following: ' + classNames);
+                    this.fail(message || 'Expected value to be an instance of one of the following: ' + normalized);
                 }
             }
         }
     }, {
         key: 'isNull',
         value: function isNull(value, message) {
-            if (null !== value) {
-                value = clarify(value);
+            if (value !== null) {
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be null');
+                this.fail(message || 'Expected value (' + cv + ') to be null');
             }
         }
     }, {
         key: 'isNotNull',
         value: function isNotNull(value, message) {
-            if (null === value) {
+            if (value === null) {
                 this.fail(message || 'Expected value to not be null');
             }
         }
@@ -160,36 +168,36 @@ var Assume = function () {
         key: 'isUndefined',
         value: function isUndefined(value, message) {
             if (!_lodash2.default.isUndefined(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be undefined');
+                this.fail(message || 'Expected value (' + cv + ') to be undefined');
             }
         }
     }, {
         key: 'isEmpty',
         value: function isEmpty(value, message) {
             if (!_lodash2.default.isEmpty(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be empty');
+                this.fail(message || 'Expected value (' + cv + ') to be empty');
             }
         }
     }, {
         key: 'isNotEmpty',
         value: function isNotEmpty(value, message) {
             if (_lodash2.default.isEmpty(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to not be empty');
+                this.fail(message || 'Expected value (' + cv + ') to not be empty');
             }
         }
     }, {
         key: 'isString',
         value: function isString(value, message) {
             if (!_lodash2.default.isString(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be a string');
+                this.fail(message || 'Expected value (' + cv + ') to be a string');
             }
         }
     }, {
@@ -199,77 +207,82 @@ var Assume = function () {
                 return;
             }
 
-            value = clarify(value);
+            var cv = clarify(value);
 
-            this.fail(message || 'Expected value (' + value + ') to be immutable');
+            this.fail(message || 'Expected value (' + cv + ') to be immutable');
         }
     }, {
         key: 'isInteger',
         value: function isInteger(value, message) {
             if (!_lodash2.default.isInteger(value)) {
+                var cv = clarify(value);
+
                 if (_lodash2.default.isString(value)) {
-                    var p = parseInt(value);
+                    var p = parseInt(value, 10);
+
                     if (p !== undefined && p.toString() === value) {
-                        value = '"' + value + '"';
+                        cv = '"' + value + '"';
                     }
-                } else {
-                    value = clarify(value);
                 }
-                this.fail(message || 'Expected value (' + value + ') to be an integer');
+
+                this.fail(message || 'Expected value (' + cv + ') to be an integer');
             }
         }
     }, {
         key: 'isBoolean',
         value: function isBoolean(value, message) {
             if (!_lodash2.default.isBoolean(value)) {
+                var cv = clarify(value);
+
                 if (_lodash2.default.isString(value) && (value === "true" || value === "false")) {
-                    value = '"' + value + '"';
-                } else {
-                    value = clarify(value);
+                    cv = '"' + value + '"';
                 }
-                this.fail(message || 'Expected value (' + value + ') to be a boolean');
+
+                this.fail(message || 'Expected value (' + cv + ') to be a boolean');
             }
         }
     }, {
         key: 'isArray',
         value: function isArray(value, message) {
             if (!_lodash2.default.isArray(value)) {
+                var cv = clarify(value);
+
                 if (_lodash2.default.isString(value) && value.startsWith("[") && value.endsWith("]")) {
-                    value = '"' + value + '"';
-                } else {
-                    value = clarify(value);
+                    cv = '"' + value + '"';
                 }
-                this.fail(message || 'Expected value (' + value + ') to be an array');
+
+                this.fail(message || 'Expected value (' + cv + ') to be an array');
             }
         }
     }, {
         key: 'isObject',
         value: function isObject(value, message) {
             if (!_lodash2.default.isObject(value)) {
+                var cv = clarify(value);
+
                 if (_lodash2.default.isString(value) && value.startsWith("{") && value.endsWith("}")) {
-                    value = '"' + value + '"';
-                } else {
-                    value = clarify(value);
+                    cv = '"' + value + '"';
                 }
-                this.fail(message || 'Expected value (' + value + ') to be an object');
+
+                this.fail(message || 'Expected value (' + cv + ') to be an object');
             }
         }
     }, {
         key: 'isDate',
         value: function isDate(value, message) {
             if (!_lodash2.default.isDate(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be a date');
+                this.fail(message || 'Expected value (' + cv + ') to be a date');
             }
         }
     }, {
         key: 'isIsoDate',
         value: function isIsoDate(value, message) {
             if (!_lodash2.default.isString(value)) {
-                value = clarify(value);
+                var cv = clarify(value);
 
-                this.fail(message || 'Expected value (' + value + ') to be a string containing an ISO-8601 date');
+                this.fail(message || 'Expected value (' + cv + ') to be a string containing an ISO-8601 date');
             }
             if (!(0, _moment2.default)(value, _moment2.default.ISO_8601).isValid()) {
                 this.fail(message || 'Expected value (' + value + ') to be a string containing a valid ISO-8601 date');
